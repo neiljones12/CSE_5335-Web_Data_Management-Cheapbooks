@@ -28,7 +28,7 @@ session_start();
         else
         {
             //loading the search page
-            include '/views/search.php';
+            include '/views/checkout.php';
         }
         ?>
     </div> 
@@ -38,7 +38,7 @@ session_start();
     <script src="bootstrap/js/bootstrap.min.js"></script>
     <script>
         function redirectToLogin() { 
-            window.location = "http://" + window.location.hostname + ':' + window.location.port + '/cheapbooks';
+            window.location = "http://" + window.location.hostname + ':' + window.location.port +'/cheapbooks';
         };
     </script>
 </body>

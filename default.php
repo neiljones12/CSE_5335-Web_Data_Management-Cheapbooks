@@ -201,7 +201,7 @@ session_start();
                                 url: 'api/setsessionvariable.php?userName=' + username,
                                 complete: function (response) {
                                     console.log(response);
-                                    window.location = "http://" + window.location.hostname + ':' + window.location.port + '/project4/dashboard.php'
+                                    window.location = "http://" + window.location.hostname + ':' + window.location.port + '/cheapbooks/dashboard.php'
                                 },
                                 error: function () {
 

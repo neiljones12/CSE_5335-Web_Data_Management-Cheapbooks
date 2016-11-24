@@ -6,7 +6,7 @@
 </head>
 <body>
     <!-- Fixed navbar -->
-    <div class="pos-f-t" style="padding-top:20px">
+    <div class="pos-f-t">
         <div class="collapse" id="navbar-header">
             <div class="container bg-inverse p-1">
                 <h3>Collapsed content</h3>
@@ -17,14 +17,14 @@
             <div class="container">
                 <button class="navbar-toggler hidden-sm-up" type="button" data-toggle="collapse" data-target="#exCollapsingNavbar2" aria-expanded="false" aria-controls="exCollapsingNavbar2" aria-label="Toggle navigation"></button>
                 <div class="collapse navbar-toggleable-xs" id="exCollapsingNavbar2">
-                    <a class="navbar-brand" href="#">
+                    <a class="navbar-brand" onclick="dashboard()">
                         <?php
                         echo "WELCOME <span class='text-uppercase'>".$_SESSION["username"]."</span>";
                         ?>
                     </a>
                     <ul class="nav navbar-nav float-lg-right">
                         <li class="nav-item">
-                            <button class="btn btn-outline-info" type="button" onclick="logout()" href="#">
+                            <button class="btn btn-outline-info" type="button" onclick="loadCart()" href="#">
                                 Cart
                                 <span id="cart"></span>
                             </button>
@@ -73,17 +73,21 @@
     </div>
     <script src="bootstrap/js/jquery.min.js"></script>
     <script>
+        var isTitle = false;
+        var isAuthor = false;
         $(document).ready(function () {
             $("#noResults").hide();
             $("#Results").hide();
-            cart()
+            cart();
+            var isTitle = false;
+            var isAuthor = false;
         });
 
         function logout() {
             $.ajax({
                 url: 'api/deletesessionvariable.php',
                 complete: function (response) {
-                    window.location = "http://" + window.location.hostname + ':' + window.location.port + '/project4/'
+                    window.location = "http://" + window.location.hostname + ':' + window.location.port + '/cheapbooks/'
                 },
                 error: function () {
 
@@ -93,6 +97,8 @@
         };
 
         function authorSearch() {
+            isTitle = false;
+            isAuthor = true;
             var search = $("#search").val();
             $.ajax({
                 url: 'api/search.php?author=' + search,
@@ -108,7 +114,14 @@
                         var data = $.parseJSON(response.responseText);
                         for (var i = 0; i < data.length; i++) {
                             //$('#data').append(data[i].name);
-                            $('#data').append('<div class="col-md-3"><div class="card"><div class="card-block"> <h5 class="card-title">' + data[i].title + '</h5> <p class="card-text"><ul class="list-group"> <li class="list-group-item">Author: ' + data[i].name + '</li>  <li class="list-group-item">Publisher: ' + data[i].publisher + '</li> <li class="list-group-item">Address: ' + data[i].address + '</li> <li class="list-group-item">Phone: ' + data[i].phone + '</li>  <li class="list-group-item">Price: ' + data[i].price + '$</li> </ul></p> <button  class="btn btn-outline-success" onclick="addToCart(' + data[i].isbn + ')">Add to cart</button> </div> </div></div>');
+                            if (data[i].number < 1) {
+                                $('#data').append('<div class="col-md-3"><div class="card"><div class="card-block"> <h5 class="card-title">' + data[i].title + '<hr/><h6 class="card-subtitle text-muted float-lg-left">Stock: ' + data[i].number + '</h6><h6 class="card-subtitle text-muted  float-lg-right">In cart: ' + data[i].inCart + '</h6>&nbsp;</h5> <p class="card-text"><ul class="list-group"> <li class="list-group-item">Author: ' + data[i].name + '</li>  <li class="list-group-item">Publisher: ' + data[i].publisher + '</li> <li class="list-group-item">Address: ' + data[i].address + '</li> <li class="list-group-item">Phone: ' + data[i].phone + '</li>  <li class="list-group-item">Price: ' + data[i].price + '$</li> </ul></p> <button  class="btn btn-outline-danger">Out of stock</button> </div> </div></div>');
+                                cart();
+                            }
+                            else {
+                                $('#data').append('<div class="col-md-3"><div class="card"><div class="card-block"> <h5 class="card-title">' + data[i].title + '<hr/><h6 class="card-subtitle text-muted float-lg-left">Stock: ' + data[i].number + '</h6><h6 class="card-subtitle text-muted  float-lg-right">In cart: ' + data[i].inCart + '</h6>&nbsp;</h5> <p class="card-text"><ul class="list-group"> <li class="list-group-item">Author: ' + data[i].name + '</li>  <li class="list-group-item">Publisher: ' + data[i].publisher + '</li> <li class="list-group-item">Address: ' + data[i].address + '</li> <li class="list-group-item">Phone: ' + data[i].phone + '</li>  <li class="list-group-item">Price: ' + data[i].price + '$</li> </ul></p> <button  class="btn btn-outline-success" onclick="addToCart(' + data[i].isbn + ')">Add to cart</button> </div> </div></div>');
+                                cart();
+                            }
                         }
                         $("#noResults").hide();
                         $("#Results").show();
@@ -122,6 +135,8 @@
         };
 
         function titleSearch() {
+            isTitle = true;
+            isAuthor = false;
             var search = $("#search").val();
             $.ajax({
                 url: 'api/search.php?title=' + search,
@@ -138,7 +153,15 @@
                         var data = $.parseJSON(response.responseText);
                         for (var i = 0; i < data.length; i++) {
                             //$('#data').append(data[i].name);
-                            $('#data').append('<div class="col-md-3"><div class="card"><div class="card-block"> <h5 class="card-title">' + data[i].title + '</h5> <p class="card-text"><ul class="list-group"> <li class="list-group-item">Author: ' + data[i].name + '</li>  <li class="list-group-item">Publisher: ' + data[i].publisher + '</li> <li class="list-group-item">Address: ' + data[i].address + '</li> <li class="list-group-item">Phone: ' + data[i].phone + '</li>  <li class="list-group-item">Price: ' + data[i].price + '$</li> </ul></p> <button  class="btn btn-outline-success" onclick="addToCart(' + data[i].isbn + ')">Add to cart</button> </div> </div></div>');
+                            console.log(data[i].inCart);
+                            if (data[i].number < 1) {
+                                $('#data').append('<div class="col-md-3"><div class="card"><div class="card-block"> <h5 class="card-title">' + data[i].title + '<hr/><h6 class="card-subtitle text-muted float-lg-left">Stock: ' + data[i].number + '</h6><h6 class="card-subtitle text-muted  float-lg-right">In cart: ' + data[i].inCart + '</h6>&nbsp;</h5> <p class="card-text"><ul class="list-group"> <li class="list-group-item">Author: ' + data[i].name + '</li>  <li class="list-group-item">Publisher: ' + data[i].publisher + '</li> <li class="list-group-item">Address: ' + data[i].address + '</li> <li class="list-group-item">Phone: ' + data[i].phone + '</li>  <li class="list-group-item">Price: ' + data[i].price + '$</li> </ul></p> <button  class="btn btn-outline-danger">Out of stock</button> </div> </div></div>');
+                                cart();
+                            }
+                            else {
+                                $('#data').append('<div class="col-md-3"><div class="card"><div class="card-block"> <h5 class="card-title">' + data[i].title + '<hr/><h6 class="card-subtitle text-muted float-lg-left">Stock: ' + data[i].number + '</h6><h6 class="card-subtitle text-muted  float-lg-right">In cart: ' + data[i].inCart + '</h6>&nbsp;</h5> <p class="card-text"><ul class="list-group"> <li class="list-group-item">Author: ' + data[i].name + '</li>  <li class="list-group-item">Publisher: ' + data[i].publisher + '</li> <li class="list-group-item">Address: ' + data[i].address + '</li> <li class="list-group-item">Phone: ' + data[i].phone + '</li>  <li class="list-group-item">Price: ' + data[i].price + '$</li> </ul></p> <button  class="btn btn-outline-success" onclick="addToCart(' + data[i].isbn + ')">Add to cart</button> </div> </div></div>');
+                                cart();
+                            }
                         }
                         $("#noResults").hide();
                         $("#Results").show();
@@ -148,14 +171,20 @@
 
                 },
             });
-            return false;
+            return false
         };
 
         function addToCart(isbn) {
+            cart()
             $.ajax({
                 url: 'api/cartAdd.php?isbn=' + isbn,
                 complete: function (response) {
-                    cart();
+                    if (isAuthor) {
+                        authorSearch();
+                    }
+                    else {
+                        titleSearch();
+                    }
                 },
                 error: function () {
 
@@ -164,11 +193,19 @@
             return false;
         };
 
+        function loadCart() {
+            window.location = "http://" + window.location.hostname + ':' + window.location.port + '/cheapbooks/checkout.php'
+        };
+
+        function dashboard() {
+            window.location = "http://" + window.location.hostname + ':' + window.location.port + '/cheapbooks/dashboard.php'
+        };
+
         function cart() {
             $.ajax({
                 url: 'api/cart.php',
                 complete: function (response) {
-                    $('#cart').empty(); 
+                    $('#cart').empty();
                     $('#cart').append(response.responseText);
                 },
                 error: function () {
